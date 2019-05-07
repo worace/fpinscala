@@ -1,11 +1,14 @@
-[![Build status](https://travis-ci.org/fpinscala/fpinscala.svg?branch=master)](https://travis-ci.org/fpinscala/fpinscala) [![Join the chat at https://gitter.im/fpinscala/fpinscala](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fpinscala/fpinscala?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
+## Exercises for [Functional Programming in Scala](https://www.manning.com/books/functional-programming-in-scala)
 
-This repository contains exercises, hints, and answers for the book
-[Functional Programming in Scala](http://manning.com/bjarnason/). Along
-with the book itself, it's the closest you'll get to having your own
-private functional programming tutor without actually having one.
+### Running
 
-Here's how to use this repository:
+```
+sbt
+project exercises
+runMain fpinscala.chapters.<chapter>
+```
+
+### Structure
 
 Each chapter in the book develops a fully working library of functions
 and data types, built up through a series of exercises and example code
@@ -48,19 +51,6 @@ Chapter descriptions:
 * Chapter 14: localeffects
 * Chapter 15: streamingio
 
-To build the code for the first time, if on windows:
-
-    $ .\sbt.cmd
-
-If on mac/linux, first make sure you have not checked out the code onto
-an encrypted file system, otherwise you will get compile errors
-regarding too long file names (one solution is to put the fpinscala repo
-on a unencrypted usb key, and symlink it into your preferred code
-location).
-
-    $ chmod a+x ./sbt
-    $ ./sbt
-
 This will download and launch [sbt](http://scala-sbt.org), a build tool
 for Scala. Once it is finished downloading, you'll get a prompt from
 which you can issue commands to build and interact with your code. Try
@@ -80,20 +70,6 @@ to get a Scala REPL with access to your exercises, and
 
 To get a menu of possible main methods to execute.
 
-To create project files for the eclipse IDE you can install the
-[sbteclipse](https://github.com/typesafehub/sbteclipse)
-[sbt](http://scala-sbt.org) plugin. This makes a new command available
-in [sbt](http://scala-sbt.org):
-
-    > eclipse
-
-All code in this repository is
-[MIT-licensed](http://opensource.org/licenses/mit-license.php). See the
-LICENSE file for details.
-
 Have fun, and good luck! Also be sure to check out [the community
 wiki](https://github.com/fpinscala/fpinscala/wiki) for the **chapter
 notes**, links to more reading, and more.
-
-_Paul and Rúnar_
-
