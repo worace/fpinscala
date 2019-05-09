@@ -143,6 +143,30 @@ object Ch3 extends App with Chapter {
     sealed trait Tree[+A]
     case class Leaf[A](value: A) extends Tree[A]
     case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+
+    // 3.25
+    def size[A](t: Tree[A]): Int = {
+      t match {
+        case Leaf(_) => 1
+        case Branch(l, r) => size(l) + size(r)
+      }
+    }
+
+    // 3.26
+    def treeMax(t: Tree[Int], maxSoFar: Int = 0): Int = {
+      t match {
+        case Leaf(i) => i.max(maxSoFar)
+        case Branch(l, r) => treeMax(l, maxSoFar).max(treeMax(r, maxSoFar))
+      }
+    }
+
+    val testTree = Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))
+    val testTree2 = Branch(Branch(Leaf(1), Leaf(2)), Branch(Leaf(8), Branch(Leaf(2), Leaf(4))))
+
+    assertEq(3, size(testTree))
+
+    assertEq(3, treeMax(testTree))
+    assertEq(8, treeMax(testTree2))
   }
 
   override def main(args: Array[String]): Unit = {
