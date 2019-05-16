@@ -160,6 +160,22 @@ object Ch3 extends App with Chapter {
       }
     }
 
+    // 3.27
+    def treeDepth[T](t: Tree[T]): Int = {
+      t match {
+        case Leaf(i) => 1
+        case Branch(l, r) => (1 + treeDepth(l)).max(1 + treeDepth(r))
+      }
+    }
+
+    // 3.28
+    def treeMap[A, B](tree: Tree[A])(f: A => B): Tree[B] = {
+      tree match {
+        case Leaf(v) => Leaf(f(v))
+        case Branch(l, r) => Branch(treeMap(l)(f), treeMap(r)(f))
+      }
+    }
+
     val testTree = Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))
     val testTree2 = Branch(Branch(Leaf(1), Leaf(2)), Branch(Leaf(8), Branch(Leaf(2), Leaf(4))))
 
@@ -167,6 +183,38 @@ object Ch3 extends App with Chapter {
 
     assertEq(3, treeMax(testTree))
     assertEq(8, treeMax(testTree2))
+
+    assertEq(3, treeDepth(testTree))
+    assertEq(4, treeDepth(testTree2))
+
+    val mapped1 = Branch(Branch(Leaf(2), Leaf(3)), Leaf(4))
+    val mapped2 = Branch(Branch(Leaf(2), Leaf(4)), Branch(Leaf(16), Branch(Leaf(4), Leaf(8))))
+
+    assertEq(mapped1, treeMap(testTree)(_ + 1))
+    assertEq(mapped2, treeMap(testTree2)(_ * 2))
+
+    def fold[A, B](tree: Tree[A])(f: A => B)(g: (B, B) => B): B = {
+      tree match {
+        case Leaf(v) => f(v)
+        case Branch(l, r) => g(fold(l)(f)(g), fold(r)(f)(g))
+      }
+    }
+
+    // size
+    assertEq(3, fold(testTree)(_ => 1)(_ + _))
+    assertEq(5, fold(testTree2)(_ => 1)(_ + _))
+
+    // max
+    assertEq(3, fold(testTree)(i => i)(_.max(_)))
+    assertEq(8, fold(testTree2)(i => i)(_.max(_)))
+
+    // depth
+    assertEq(3, fold(testTree)(_ => 1)((a, b) => (a + 1).max(b + 1)))
+    assertEq(4, fold(testTree2)(_ => 1)((a, b) => (a + 1).max(b + 1)))
+
+    //map
+    assertEq(mapped1, fold[Int, Tree[Int]](testTree)(l => Leaf(l + 1))((a, b) => Branch(a,b)))
+    assertEq(mapped2, fold[Int, Tree[Int]](testTree2)(l => Leaf(l * 2))((a, b) => Branch(a,b)))
   }
 
   override def main(args: Array[String]): Unit = {
