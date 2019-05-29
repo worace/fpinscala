@@ -51,6 +51,11 @@ object Ch4 extends App with Chapter {
       .flatMap(mean)
   }
 
+  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A,B) => C): Option[C] = {
+    a.flatMap(a => b.map(b => (a,b)))
+      .map { case (a, b) => f(a,b) }
+  }
+
   override def main(args: Array[String]): Unit = {
     // 4.1
     assertEq(Some(2), Some(1).map(_ + 1))
@@ -65,7 +70,15 @@ object Ch4 extends App with Chapter {
     assertEq(Some(4), None.orElse(Some(4)))
 
     // https://www.mathsisfun.com/data/standard-deviation.html
+    // 4.2
     val xs = Seq[Double](600, 470, 170, 430, 300)
     assertEq(Some(21704), variance(xs))
+    assertEq(None, variance(Seq()))
+
+    // 4.3
+    assertEq(None, map2[Int, Int, Int](None, None)(_ + _))
+    assertEq(None, map2[Int, Int, Int](None, Some(2))(_ + _))
+    assertEq(None, map2[Int, Int, Int](Some(1), None)(_ + _))
+    assertEq(Some(3), map2(Some(1), Some(2))(_ + _))
   }
 }
