@@ -36,7 +36,23 @@ case class Some[+A](get: A) extends Option[A]
 case object None extends Option[Nothing]
 
 object Ch4 extends App with Chapter {
+
+  def mean(xs: Seq[Double]): Option[Double] = {
+    if (xs.isEmpty) {
+      None
+    } else {
+      Some(xs.sum / xs.size)
+    }
+  }
+
+  def variance(xs: Seq[Double]): Option[Double] = {
+    mean(xs)
+      .map(m => xs.map(x => Math.pow(x - m, 2)))
+      .flatMap(mean)
+  }
+
   override def main(args: Array[String]): Unit = {
+    // 4.1
     assertEq(Some(2), Some(1).map(_ + 1))
     assertEq(None, None.map(_.toString))
     assertEq(Some(1), Some(1).flatMap(i => Some(i)))
@@ -47,5 +63,9 @@ object Ch4 extends App with Chapter {
     assertEq(None, Some(3).filter( _ % 2 == 0 ))
     assertEq(Some(3), Some(3).orElse(Some(4)))
     assertEq(Some(4), None.orElse(Some(4)))
+
+    // https://www.mathsisfun.com/data/standard-deviation.html
+    val xs = Seq[Double](600, 470, 170, 430, 300)
+    assertEq(Some(21704), variance(xs))
   }
 }
