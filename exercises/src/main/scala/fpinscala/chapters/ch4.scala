@@ -56,6 +56,22 @@ object Ch4 extends App with Chapter {
       .map { case (a, b) => f(a,b) }
   }
 
+  def sequence[A](opts: List[Option[A]]): Option[List[A]] = {
+    // Some(1), Some(2) -> Some(1,2)
+    // Some(1), None -> None
+    val start: Option[List[A]] = Some(List[A]())
+    opts.foldLeft(start) { (mList: Option[List[A]], x: Option[A]) =>
+      mList.flatMap(list => x.map(x => list :+ x))
+    }
+  }
+
+  def traverse[A, B](as: List[A])(f: A => Option[B]): Option[List[B]] = {
+    val result: Option[List[B]] = Some(List[B]())
+    as.foldLeft(result) { (result: Option[List[B]], a: A) =>
+      result.flatMap(list => f(a).map(b => list :+ b))
+    }
+  }
+
   override def main(args: Array[String]): Unit = {
     // 4.1
     assertEq(Some(2), Some(1).map(_ + 1))
@@ -80,5 +96,15 @@ object Ch4 extends App with Chapter {
     assertEq(None, map2[Int, Int, Int](None, Some(2))(_ + _))
     assertEq(None, map2[Int, Int, Int](Some(1), None)(_ + _))
     assertEq(Some(3), map2(Some(1), Some(2))(_ + _))
+
+    // 4.4
+    assertEq(Some(List(1,2)), sequence(List(Some(1), Some(2))))
+    assertEq(None, sequence(List(Some(1), None)))
+
+    // 4.5
+    def maybeStr(i: Int): Option[String] = if (i % 2 == 0) { Some(i.toString) } else { None }
+    assertEq(Some(List("2","4")), traverse(List(2, 4))(maybeStr))
+    assertEq(None, traverse(List(2, 1))(maybeStr))
+    assertEq(None, traverse(List(1, 2))(maybeStr))
   }
 }
