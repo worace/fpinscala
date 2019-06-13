@@ -35,6 +35,37 @@ sealed trait Option[+A] {
 case class Some[+A](get: A) extends Option[A]
 case object None extends Option[Nothing]
 
+// 4.6
+sealed trait Either[+E, +A] {
+  def map[B](f: A => B): Either[E, B] = {
+    this match {
+      case Left(e) => Left(e)
+      case Right(a) => Right(f(a))
+    }
+  }
+
+  def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] = {
+    this match {
+      case Left(e) => Left(e)
+      case Right(a) => f(a)
+    }
+  }
+
+  def orElse[EE >: E, B](b: => Either[EE, B]): Either[EE, B] = {
+    this match {
+      case Left(_) => b
+      case Right(a: B) => Right(a)
+    }
+  }
+
+  def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] = {
+    flatMap(a => b.map(b => (a, b))).map { case (a, b) => f(a, b) }
+  }
+}
+
+case class Left[+E](value: E) extends Either[E, Nothing]
+case class Right[+A](value: A) extends Either[Nothing, A]
+
 object Ch4 extends App with Chapter {
 
   def mean(xs: Seq[Double]): Option[Double] = {
@@ -72,6 +103,9 @@ object Ch4 extends App with Chapter {
     }
   }
 
+  object ExEither {
+
+  }
   override def main(args: Array[String]): Unit = {
     // 4.1
     assertEq(Some(2), Some(1).map(_ + 1))
@@ -106,5 +140,7 @@ object Ch4 extends App with Chapter {
     assertEq(Some(List("2","4")), traverse(List(2, 4))(maybeStr))
     assertEq(None, traverse(List(2, 1))(maybeStr))
     assertEq(None, traverse(List(1, 2))(maybeStr))
+
+    //
   }
 }
